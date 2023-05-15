@@ -140,6 +140,9 @@
         }
 
         .move:active {
+            animation-duration: 70ms;
+            animation-name: scaleAnimation2;
+            animation-fill-mode: forwards;
             background-color: #ECB365;
             color: #222831
         }
@@ -212,9 +215,11 @@
             box-sizing: border-box;
             border-radius: 15px;
         }
+
         .wrong {
             background-color: red;
         }
+
         .correct {
             background-color: green;
         }
@@ -232,7 +237,7 @@
             </div>
         </div>
         <div class="play-button" id="demo">🔊</div>
-        <div class="alerts" id="alerts">Enter a number you hear:</div>
+        <div class="alerts" id="alerts">Enter the number you hear:</div>
         <input type="number" class="user-input" id="user-input">
         <div class="forma">
             <button class="move" id="refresh">New Number</button>
@@ -241,19 +246,21 @@
     </div>
 
     <script defer>
-        const voice_indexes = [86, 82, 147, 148]
+        const voice_index = 147
         let min = 1;
         let max = 25;
         let voice_list;
         let numb = getRandomInt(min, max)
         let alerts = document.getElementById("alerts")
-
-        document.getElementById("demo").addEventListener("click", play_voice);
-        document.getElementById("refresh").addEventListener("click", new_number);
-        document.getElementById("check").addEventListener("click", check);
+        let play = document.getElementById("demo");
         let easy = document.getElementById("easy").addEventListener("click", difficulty_selector);
         let medium = document.getElementById("medium").addEventListener("click", difficulty_selector);
         let hard = document.getElementById("hard").addEventListener("click", difficulty_selector);
+        let user_input = document.getElementById("user-input")
+
+        play.addEventListener("click", play_voice);
+        document.getElementById("refresh").addEventListener("click", new_number);
+        document.getElementById("check").addEventListener("click", check);
 
         const allVoicesObtained = new Promise(function (resolve, reject) {
             let voices = window.speechSynthesis.getVoices();
@@ -269,8 +276,6 @@
         allVoicesObtained.then(voices => (voice_list = voices));
 
         function check() {
-
-            let user_input = document.getElementById("user-input")
             user_input.classList.remove("anim");
             void user_input.offsetWidth;
             user_input.classList.add("anim");
@@ -295,12 +300,18 @@
         }
         function new_number() {
             numb = getRandomInt(min, max)
+            alerts.innerText = "Try this one:";
+            alerts.classList.remove("wrong");
+            alerts.classList.remove("correct");
+            play.classList.remove("anim");
+            void play.offsetWidth;
+            play.classList.add("anim")
+            user_input.value = "";
         }
 
         function play_voice() {
             let msg = new SpeechSynthesisUtterance();
-            let rand = voice_indexes[~~(Math.random() * voice_indexes.length)]
-            msg.voice = voice_list[rand];
+            msg.voice = voice_list[voice_index];
             msg.text = String(numb);
             msg.lang = "es-ES";
             speechSynthesis.speak(msg);
