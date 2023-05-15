@@ -1,3 +1,3 @@
 # Spanish-Number-Trainer
 
-## Single document Javascript trainer for spanish numbers usins Web Speech API.
+## Single HTML - CSS - Javascript trainer for spanish numbers usins Web Speech API.
