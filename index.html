@@ -29,7 +29,7 @@
             display: flex;
             padding: 2%;
             width: 350px;
-            height: 500px;
+            height: 540px;
             flex-direction: column;
             flex-wrap: nowrap;
             justify-content: space-between;
@@ -210,10 +210,14 @@
 
         .alerts {
             color: aliceblue;
-            font-size: 20px;
-            padding: 10px;
+            font-size: 15px;
+            padding: 5px;
             box-sizing: border-box;
             border-radius: 15px;
+        }
+
+        .hidden {
+            visibility: hidden;
         }
 
         .wrong {
@@ -236,8 +240,9 @@
                 <button class="selector inactive" id="hard">Hard<br>(1-1000)</button>
             </div>
         </div>
+        <div class="alerts" id="new-numb">Enter the number you hear:</div>
         <div class="play-button" id="demo">🔊</div>
-        <div class="alerts" id="alerts">Enter the number you hear:</div>
+        <div class="alerts hidden" id="alerts">Not Guessed Yet</div>
         <input type="number" class="user-input" id="user-input">
         <div class="forma">
             <button class="move" id="refresh">New Number</button>
@@ -252,6 +257,7 @@
         let voice_list;
         let numb = getRandomInt(min, max)
         let alerts = document.getElementById("alerts")
+        let new_n = document.getElementById("new-numb")
         let play = document.getElementById("demo");
         let easy = document.getElementById("easy").addEventListener("click", difficulty_selector);
         let medium = document.getElementById("medium").addEventListener("click", difficulty_selector);
@@ -259,7 +265,7 @@
         let user_input = document.getElementById("user-input")
 
         play.addEventListener("click", play_voice);
-        document.getElementById("refresh").addEventListener("click", new_number);
+        document.getElementById("refresh").addEventListener("click", function () { new_number(false) });
         document.getElementById("check").addEventListener("click", check);
 
         const allVoicesObtained = new Promise(function (resolve, reject) {
@@ -283,11 +289,15 @@
             if (String(user_input.value) != String(numb)) {
                 alerts.innerText = "Try Again!";
                 alerts.classList.remove("correct");
+                new_n.classList.add("hidden")
                 alerts.classList.add("wrong");
+                alerts.classList.remove("hidden");
             } else {
                 alerts.innerText = "Good Job!";
                 alerts.classList.remove("wrong");
                 alerts.classList.add("correct");
+                alerts.classList.remove("hidden");
+                new_number(true);
             }
 
 
@@ -298,15 +308,20 @@
             l_max = Math.floor(max);
             return Math.floor(Math.random() * (l_max - l_min + 1)) + l_min;
         }
-        function new_number() {
+        function new_number(succes) {
             numb = getRandomInt(min, max)
-            alerts.innerText = "Try this one:";
-            alerts.classList.remove("wrong");
-            alerts.classList.remove("correct");
+            new_n.innerText = "Try this one:";
+            new_n.classList.remove("hidden");
+            if (succes === false) {
+
+                alerts.classList.add("hidden");
+            }
+
             play.classList.remove("anim");
             void play.offsetWidth;
             play.classList.add("anim")
             user_input.value = "";
+            play_voice();
         }
 
         function play_voice() {
