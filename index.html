@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>Spanish Numbers Trainer</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            height: 100%;
+            background-color: #222831;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .wrapper {
+            margin-top: 10px;
+            box-sizing: border-box;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px;
+            background-color: #393E46;
+            display: flex;
+            padding: 2%;
+            width: 350px;
+            height: 500px;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .play-button {
+            cursor: pointer;
+            box-shadow: 2px 2px 10px #222831;
+            display: flex;
+            flex: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 55px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #0E8388;
+        }
+
+        .play-button:hover {
+            animation-duration: 100ms;
+            animation-name: scaleAnimation;
+            animation-fill-mode: forwards;
+        }
+
+        .play-button:active {
+            animation-duration: 70ms;
+            animation-name: scaleAnimation2;
+            animation-fill-mode: forwards;
+
+        }
+
+        @keyframes scaleAnimation {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.07);
+            }
+        }
+
+        @keyframes scaleAnimation2 {
+            0% {
+                transform: scale(1.07);
+            }
+
+            100% {
+                transform: scale(0.94);
+            }
+        }
+
+        .difficulty {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+        }
+
+        .selector {
+            width: 100px;
+            box-shadow: 2px 2px 5px #222831;
+            font-size: 15px;
+            color: #CBE4DE;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            background-color: #0E8388;
+        }
+
+        .selector:hover {
+            animation-duration: 100ms;
+            animation-name: scaleAnimation;
+            animation-fill-mode: forwards;
+            background-color: #ECB365;
+            color: #222831
+        }
+
+        .selector:active {
+            background-color: #ECB365;
+            color: #222831
+        }
+
+        .selected {
+            background-color: #ECB365;
+            color: #222831
+        }
+
+        .forma {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            margin-bottom: 10px;
+        }
+
+        .move {
+            box-sizing: border-box;
+            box-shadow: 2px 2px 5px #222831;
+            font-size: 15px;
+            color: #CBE4DE;
+            width: 100px;
+            padding: 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            background-color: #0E8388;
+        }
+
+        .move:active {
+            background-color: #ECB365;
+            color: #222831
+        }
+
+        @media (hover: hover) {
+            .move:hover {
+                animation-duration: 100ms;
+                animation-name: scaleAnimation;
+                animation-fill-mode: forwards;
+                background-color: #ECB365;
+                color: #222831
+            }
+        }
+
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+
+        }
+
+        .anim {
+            animation-name: bounce;
+            animation-duration: 250ms;
+            animation-iteration-count: 1;
+            animation-fill-mode: forwards;
+            animation-delay: 0s;
+            animation-timing-function: linear;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(0, -5px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .user-input {
+            flex: none;
+            font-size: 25px;
+            margin-left: 10px;
+            margin-right: 10px;
+            border: none;
+            outline: none;
+            vertical-align: middle;
+            height: 50px;
+            width: 70%;
+            border-radius: 25px;
+            box-sizing: border-box;
+            padding: 0 18px;
+        }
+
+        .header {
+            color: aliceblue;
+            text-align: center;
+            font-size: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .alerts {
+            color: aliceblue;
+            font-size: 20px;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 15px;
+        }
+        .wrong {
+            background-color: red;
+        }
+        .correct {
+            background-color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div style="width: 100%;">
+            <p class="header">Spanish Number Trainer</p>
+            <div class="difficulty">
+                <button class="selector selected" id="easy">Easy<br>(1-25)</button>
+                <button class="selector inactive" id="medium">Medium<br>(1-100)</button>
+                <button class="selector inactive" id="hard">Hard<br>(1-1000)</button>
+            </div>
+        </div>
+        <div class="play-button" id="demo">🔊</div>
+        <div class="alerts" id="alerts">Enter a number you hear:</div>
+        <input type="number" class="user-input" id="user-input">
+        <div class="forma">
+            <button class="move" id="refresh">New Number</button>
+            <button class="move" id="check">Check</button>
+        </div>
+    </div>
+
+    <script defer>
+        const voice_indexes = [86, 82, 147, 148]
+        let min = 1;
+        let max = 25;
+        let voice_list;
+        let numb = getRandomInt(min, max)
+        let alerts = document.getElementById("alerts")
+
+        document.getElementById("demo").addEventListener("click", play_voice);
+        document.getElementById("refresh").addEventListener("click", new_number);
+        document.getElementById("check").addEventListener("click", check);
+        let easy = document.getElementById("easy").addEventListener("click", difficulty_selector);
+        let medium = document.getElementById("medium").addEventListener("click", difficulty_selector);
+        let hard = document.getElementById("hard").addEventListener("click", difficulty_selector);
+
+        const allVoicesObtained = new Promise(function (resolve, reject) {
+            let voices = window.speechSynthesis.getVoices();
+            if (voices.length !== 0) {
+                resolve(voices);
+            } else {
+                window.speechSynthesis.addEventListener("voiceschanged", function () {
+                    voices = window.speechSynthesis.getVoices();
+                    resolve(voices);
+                });
+            }
+        });
+        allVoicesObtained.then(voices => (voice_list = voices));
+
+        function check() {
+
+            let user_input = document.getElementById("user-input")
+            user_input.classList.remove("anim");
+            void user_input.offsetWidth;
+            user_input.classList.add("anim");
+
+            if (String(user_input.value) != String(numb)) {
+                alerts.innerText = "Try Again!";
+                alerts.classList.remove("correct");
+                alerts.classList.add("wrong");
+            } else {
+                alerts.innerText = "Good Job!";
+                alerts.classList.remove("wrong");
+                alerts.classList.add("correct");
+            }
+
+
+        }
+
+        function getRandomInt(min, max) {
+            l_min = Math.ceil(min);
+            l_max = Math.floor(max);
+            return Math.floor(Math.random() * (l_max - l_min + 1)) + l_min;
+        }
+        function new_number() {
+            numb = getRandomInt(min, max)
+            console.log(numb)
+        }
+
+        function play_voice() {
+            let msg = new SpeechSynthesisUtterance();
+            let rand = voice_indexes[~~(Math.random() * voice_indexes.length)]
+            msg.voice = voice_list[rand];
+            msg.text = String(numb);
+            msg.lang = "es-ES";
+            speechSynthesis.speak(msg);
+        }
+
+        function difficulty_selector() {
+            let matches = document.querySelectorAll("button.selector");
+            matches.forEach((btn) => {
+                if (this.id === btn.id) {
+                    btn.classList.add("selected");
+                } else {
+                    btn.classList.remove("selected");
+                }
+            });
+            switch (this.id) {
+                case "easy":
+                    max = 25
+                    break;
+                case "medium":
+                    max = 100
+                    break;
+                case "hard":
+                    max = 1000
+                    break;
+                default:
+                    max = 25
+            }
+
+        }
+    </script>
+
+</body>
+
+</html>
