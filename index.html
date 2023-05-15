@@ -251,7 +251,7 @@
     </div>
 
     <script defer>
-        const voice_index = 147
+        let voice_index = 147
         let min = 1;
         let max = 25;
         let voice_list;
@@ -280,6 +280,7 @@
             }
         });
         allVoicesObtained.then(voices => (voice_list = voices));
+        voice_list.forEach(function(item, index) {if (item.name === 'Google español'){voice_index = index}});
 
         function check() {
             user_input.classList.remove("anim");
