@@ -281,6 +281,7 @@
         <div class="alerts hidden" id="alerts">Not Guessed Yet</div>
         <input type="number" class="user-input" id="user-input">
         <div class="forma">
+            <button class="move" id="giveup">Show Number</button>
             <button class="move" id="refresh">New Number</button>
             <button class="move" id="check">Check</button>
         </div>
@@ -308,6 +309,7 @@
         voice_select.addEventListener("change", change_voice);
         document.getElementById("refresh").addEventListener("click", function () { new_number(false) });
         document.getElementById("check").addEventListener("click", check);
+        document.getElementById("giveup").addEventListener("click", give_up);
 
 
         const allVoicesObtained = new Promise(function (resolve, reject) {
@@ -363,6 +365,15 @@
                 new_number(true);
             }
 
+
+        }
+
+        function give_up() {
+            alerts.innerText = `It is ${numb}!`;
+            alerts.classList.remove("correct");
+            new_n.classList.add("hidden")
+            alerts.classList.add("wrong");
+            alerts.classList.remove("hidden");
 
         }
 
