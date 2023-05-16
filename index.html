@@ -29,7 +29,7 @@
             display: flex;
             padding: 2%;
             width: 350px;
-            height: 540px;
+            height: 600px;
             flex-direction: column;
             flex-wrap: nowrap;
             justify-content: space-between;
@@ -87,7 +87,7 @@
             width: 100%;
             display: flex;
             flex-direction: row;
-            justify-content: space-evenly;
+            justify-content: space-between;
         }
 
         .selector {
@@ -123,7 +123,7 @@
             width: 100%;
             display: flex;
             flex-direction: row;
-            justify-content: space-evenly;
+            justify-content: space-around;
             margin-bottom: 10px;
         }
 
@@ -190,6 +190,7 @@
             font-size: 25px;
             margin-left: 10px;
             margin-right: 10px;
+            margin-bottom: 10px;
             border: none;
             outline: none;
             vertical-align: middle;
@@ -227,17 +228,52 @@
         .correct {
             background-color: green;
         }
+
+        select {
+            appearance: none;
+            background-color: transparent;
+            border: none;
+            padding: 0 1em 0 0;
+            margin: 0;
+            width: 100%;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: inherit;
+            line-height: inherit;
+            outline: none;
+        }
+
+        .select {
+            border: 1px solid #222831;
+            color: aliceblue;
+            border-radius: 0.25em;
+            padding: 0.25em 0.5em;
+            font-size: 1.25rem;
+            cursor: pointer;
+            line-height: 1.1;
+            background-color: lightgray;
+        }
     </style>
 </head>
 
 <body>
     <div class="wrapper">
-        <div style="width: 100%;">
+        <div style="width: 100%">
             <p class="header">Spanish Number Trainer</p>
+            <div class="select">
+                <select id="arrayDropdown">
+                    <option></option>
+                    <option></option>
+                </select>
+            </div>
+        </div>
+        <div style="width: 100%;">
+
             <div class="difficulty">
-                <button class="selector selected" id="easy">Easy<br>(1-25)</button>
-                <button class="selector inactive" id="medium">Medium<br>(1-100)</button>
-                <button class="selector inactive" id="hard">Hard<br>(1-1000)</button>
+                <button class="selector selected" id="easy">Easy<br>(Up to 25)</button>
+                <button class="selector inactive" id="medium">Medium<br>(Up to 100)</button>
+                <button class="selector inactive" id="hard">Hard<br>(Up to 1000)</button>
+                <button class="selector inactive" id="expert">Expert<br>(Up to 10000)</button>
             </div>
         </div>
         <div class="alerts" id="new-numb">Enter the number you hear:</div>
@@ -251,37 +287,63 @@
     </div>
 
     <script defer>
-        let voice_index = 147
+        let voice_index = 0;
+        let voices_filtered = []
         let min = 1;
         let max = 25;
         let voice_list;
-        let numb = getRandomInt(min, max)
-        let alerts = document.getElementById("alerts")
-        let new_n = document.getElementById("new-numb")
+        let numb = getRandomInt(min, max);
+        let alerts = document.getElementById("alerts");
+        let new_n = document.getElementById("new-numb");
         let play = document.getElementById("demo");
         let easy = document.getElementById("easy").addEventListener("click", difficulty_selector);
         let medium = document.getElementById("medium").addEventListener("click", difficulty_selector);
         let hard = document.getElementById("hard").addEventListener("click", difficulty_selector);
-        let user_input = document.getElementById("user-input")
+        let expert = document.getElementById("expert").addEventListener("click", difficulty_selector);
+        let user_input = document.getElementById("user-input");
+        let voice_select = document.getElementById("arrayDropdown");
+
 
         play.addEventListener("click", play_voice);
+        voice_select.addEventListener("change", change_voice);
         document.getElementById("refresh").addEventListener("click", function () { new_number(false) });
         document.getElementById("check").addEventListener("click", check);
 
+
         const allVoicesObtained = new Promise(function (resolve, reject) {
-            let voices = window.speechSynthesis.getVoices();
-            if (voices.length !== 0) {
-                resolve(voices);
+            voice_list = window.speechSynthesis.getVoices();
+            if (voice_list.length !== 0) {
+                resolve(voice_list);
             } else {
                 window.speechSynthesis.addEventListener("voiceschanged", function () {
-                    voices = window.speechSynthesis.getVoices();
-                    resolve(voices);
+                    voice_list = window.speechSynthesis.getVoices();
+                    resolve(voice_list);
                 });
             }
         });
-        allVoicesObtained.then(voices => (voice_list = voices));
-        voice_list.forEach(function(item, index) {if (item.name === 'Google español'){voice_index = index}});
+        allVoicesObtained.then(voice_list => (populate_voice_choice(voice_list)));
 
+        function populate_voice_choice(voice_list) {
+            voice_list.forEach(function (item, index) { if (item.lang === 'es-ES' || item.lang === 'es-MX') { voices_filtered.push(item) } })
+            let options = '';
+            voices_filtered.map((op, i) => {
+                options += `<option value="${op.name}" id="${i}" style="border-radius: 5px;"">${op.name}</option>`
+            })
+            voice_select.innerHTML = options;
+            let len = voice_select.options.length;
+            for (var i = 0; i < len; i++) {
+                if (voice_select.options[i].value == "Google español") {
+                    voice_select.options[i].selected = true;
+                    break;
+                }
+            }
+            voice_index = voice_select.options[voice_select.selectedIndex].id
+        }
+
+        function change_voice() {
+            voice_index = voice_select.options[voice_select.selectedIndex].id
+            play_voice();
+        }
         function check() {
             user_input.classList.remove("anim");
             void user_input.offsetWidth;
@@ -327,7 +389,7 @@
 
         function play_voice() {
             let msg = new SpeechSynthesisUtterance();
-            msg.voice = voice_list[voice_index];
+            msg.voice = voices_filtered[voice_index];
             msg.text = String(numb);
             msg.lang = "es-ES";
             speechSynthesis.speak(msg);
@@ -351,6 +413,9 @@
                     break;
                 case "hard":
                     max = 1000
+                    break;
+                case "expert":
+                    max = 10000;
                     break;
                 default:
                     max = 25
