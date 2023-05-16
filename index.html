@@ -303,6 +303,7 @@
         let expert = document.getElementById("expert").addEventListener("click", difficulty_selector);
         let user_input = document.getElementById("user-input");
         let voice_select = document.getElementById("arrayDropdown");
+        let banned_names = ["Grandma", "Grandpa", "Rocko", "Eddy", "Reed", "Flo", "Sandy", "Shelley"]
 
 
         play.addEventListener("click", play_voice);
@@ -326,7 +327,8 @@
         allVoicesObtained.then(voice_list => (populate_voice_choice(voice_list)));
 
         function populate_voice_choice(voice_list) {
-            voice_list.forEach(function (item, index) { if (item.lang === 'es-ES' || item.lang === 'es-MX') { voices_filtered.push(item) } })
+            function check_name(banned_names, current_name) {return banned_names.some(substring=>current_name.includes(substring))}
+            voice_list.forEach(function (item, index) { if ((item.lang === 'es-ES' || item.lang === 'es-MX')) {if (!check_name(banned_names, item.name)) {voices_filtered.push(item)}}})
             let options = '';
             voices_filtered.map((op, i) => {
                 options += `<option value="${op.name}" id="${i}" style="border-radius: 5px;"">${op.name}</option>`
